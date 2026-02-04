@@ -1,16 +1,46 @@
-# React + Vite
+# React Trading Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+A high-performance, premium-styled trading dashboard built with React and Tailwind CSS. This project features real-time-like data visualization, backtesting configuration, and a responsive layout.
 
-Currently, two official plugins are available:
+## Tech Stack
+- **React 19**: UI Library
+- **Tailwind CSS**: Utility-first CSS framework
+- **Vite**: Build tool and dev server
+- **Recharts**: Charting library
+- **Lucide React**: Icon set
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
 
-## React Compiler
+### Prerequisites
+- Node.js (Latest LTS recommended)
+- npm
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation
+1. Clone the repository.
+2. Install dependencies:
+   \`\`\`bash
+   npm install
+   \`\`\`
 
-## Expanding the ESLint configuration
+### Running Locally
+Start the development server:
+\`\`\`bash
+npm run dev
+\`\`\`
+Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Building for Production
+\`\`\`bash
+npm run build
+\`\`\`
+
+## Project Structure
+The project has been refactored to follow industry standards:
+- **`src/components`**: Reusable UI elements.
+- **`src/pages`**: Top-level views mapped to routes.
+- **`src/constants`**: centralized configuration.
+- **`docs/`**: Detailed documentation on architecture and standards.
+
+## Note on Logic
+This codebase has been structurally refactored while strictly preserving the original runtime behavior and business logic.

@@ -1,10 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
-import Dashboard from './components/Dashboard';
+import Dashboard from './pages/Dashboard';
 import BacktestList from './pages/BacktestList';
 import BacktestDetail from './pages/BacktestDetail';
 
+/**
+ * Main App component.
+ * Handles routing and layout wrapping.
+ * @returns {JSX.Element}
+ */
 function App() {
   return (
     <Router>

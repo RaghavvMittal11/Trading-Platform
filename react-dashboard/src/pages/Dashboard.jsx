@@ -1,8 +1,8 @@
 import React from 'react';
-import StatsCard from './StatsCard';
-import PortfolioChart from './PortfolioChart';
-import ActiveTrades from './ActiveTrades';
-import StrategyPerformance from './StrategyPerformance';
+import StatsCard from '../components/StatsCard';
+import PortfolioChart from '../components/PortfolioChart';
+import ActiveTrades from '../components/ActiveTrades';
+import StrategyPerformance from '../components/StrategyPerformance';
 import { Bot, Activity, TrendingUp, DollarSign } from 'lucide-react';
 
 const Dashboard = () => {
