@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Login & Signup</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.39/build/spline-viewer.js"></script>
+</head>
+
+<body>
+
+    <!-- Spline Background Layer -->
+    <div class="spline-background">
+        <spline-viewer url="https://prod.spline.design/jASYi8ehO3hlc692/scene.splinecode"></spline-viewer>
+    </div>
+
+    <!-- Main Content Overlay -->
+    <div class="main-overlay">
+        <div class="glass-card">
+
+            <!-- Login Form -->
+            <form id="loginForm" class="active-form">
+                <div class="form-header">
+                    <h2>Welcome Back</h2>
+                    <p class="subtitle">Access your dashboard</p>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="loginEmail" required placeholder=" ">
+                    <label for="loginEmail">Email Address</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="loginPassword" required placeholder=" ">
+                    <label for="loginPassword">Password</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <div class="actions">
+                    <a href="#" id="linkForgot" class="link-animate">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Sign In</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <p class="switch-text">
+                    New here? <a href="#" id="linkSignup" class="link-animate">Create Account</a>
+                </p>
+            </form>
+
+            <form id="signupForm" class="hidden-form">
+                <div class="form-header">
+                    <h2>Join the Future</h2>
+                    <p class="subtitle">Start your journey today</p>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="signupName" required placeholder=" ">
+                    <label for="signupName">Full Name</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="signupEmail" required placeholder=" ">
+                    <label for="signupEmail">Email Address</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="signupPassword" required placeholder=" ">
+                    <label for="signupPassword">Password</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Sign Up</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <p class="switch-text">
+                    Already a member? <a href="#" id="linkLogin" class="link-animate">Sign In</a>
+                </p>
+            </form>
+
+            <form id="forgotForm" class="hidden-form">
+                <div class="form-header">
+                    <h2>Reset Password</h2>
+                    <p class="subtitle">We'll help you get back in</p>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="forgotEmail" required placeholder=" ">
+                    <label for="forgotEmail">Email Address</label>
+                    <div class="glow-bar"></div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <span>Send Reset Link</span>
+                    <div class="btn-glow"></div>
+                </button>
+
+                <p class="switch-text">
+                    <a href="#" id="linkLoginFromForgot" class="link-animate">Back to Login</a>
+                </p>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
