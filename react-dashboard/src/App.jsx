@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
+import StrategyList from './pages/StrategyList';
+import StrategyEditor from './pages/StrategyEditor';
 import BacktestList from './pages/BacktestList';
 import BacktestDetail from './pages/BacktestDetail';
 
@@ -16,6 +18,9 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/strategies" element={<StrategyList />} />
+          <Route path="/strategies/new" element={<StrategyEditor />} />
+          <Route path="/strategies/:id" element={<StrategyEditor />} />
           <Route path="/backtest" element={<BacktestList />} />
           <Route path="/backtest/:id" element={<BacktestDetail />} />
           {/* Fallback for other routes for now */}
