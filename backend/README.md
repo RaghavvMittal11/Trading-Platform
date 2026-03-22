@@ -1,5 +1,9 @@
 # Algo Kaisen — Backend: Module 2 Backtesting Engine
 
+To run: uvicorn app.main:app --reload
+To test: python -m pytest tests/test_backtest.py -v
+
+
 > **Status:** Module 2 (Strategy & Backtesting Engine) — fully implemented and tested.  
 > Modules 1, 3, 4, 5 are stubbed and documented for seamless integration.
 

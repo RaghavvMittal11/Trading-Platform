@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Plus, Search, Filter, Eye, Trash2, CheckCircle, Clock, AlertTriangle, TrendingUp, Activity, X } from 'lucide-react';
 import CreateBacktestModal from '../components/CreateBacktestModal';
 import { useNavigate } from 'react-router-dom';
+import { useBacktest } from '../context/BacktestContext';
 
 const BacktestList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,32 +10,13 @@ const BacktestList = () => {
     const [showFilters, setShowFilters] = useState(false);
     const [statusFilter, setStatusFilter] = useState('ALL');
     const navigate = useNavigate();
-
-    const [backtests, setBacktests] = useState([
-        { id: 1, name: 'EMA Strategy Test 1', strategy: 'EMA CrossOver', symbol: 'RELIANCE', status: 'COMPLETED', date: '2 mins ago', return: '+12.5%' },
-        { id: 2, name: 'BTC Scalp V2', strategy: 'RSI Divergence', symbol: 'BTCUSDT', status: 'RUNNING', date: 'In progress', return: '---' },
-        { id: 3, name: 'Failed Run', strategy: 'Bollinger Bands', symbol: 'NIFTY', status: 'ERROR', date: '1 hour ago', return: '0.00%' },
-        { id: 4, name: 'MACD Trend', strategy: 'MACD', symbol: 'ES', status: 'COMPLETED', date: 'Yesterday', return: '+4.2%' },
-    ]);
-
-    const handleStartBacktest = (data) => {
-        // In a real app, this would make an API call
-        console.log("Starting backtest:", data);
-        setBacktests(prev => [{
-            id: prev.length + 1,
-            name: data.name || 'New Backtest',
-            strategy: data.strategy || 'Unknown',
-            symbol: data.symbol || 'N/A',
-            status: 'RUNNING',
-            date: 'Just now',
-            return: '---'
-        }, ...prev]);
-        setIsModalOpen(false);
-    };
+    
+    // Consume real data from context
+    const { backtests, deleteBacktest } = useBacktest();
 
     const handleDelete = (id) => {
         if (window.confirm('Are you sure you want to delete this backtest?')) {
-            setBacktests(prev => prev.filter(test => test.id !== id));
+            deleteBacktest(id);
         }
     };
 
@@ -48,10 +30,14 @@ const BacktestList = () => {
     };
 
     const filteredBacktests = backtests.filter(test => {
+        const symbolStr = test.parameters?.symbol || '';
+        const strategyStr = test.parameters?.strategy || '';
+        const nameStr = test.name || '';
+        
         const matchesSearch =
-            test.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            test.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            test.strategy.toLowerCase().includes(searchQuery.toLowerCase());
+            nameStr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            symbolStr.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            strategyStr.toLowerCase().includes(searchQuery.toLowerCase());
 
         const matchesFilter = statusFilter === 'ALL' || test.status === statusFilter;
 
@@ -138,7 +124,7 @@ const BacktestList = () => {
                         const StatusIcon = status.icon;
 
                         return (
-                            <div key={test.id} className="group relative bg-[#0f0f12] border border-white/5 hover:border-white/10 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-xl hover:shadow-black/50">
+                            <div key={test.backtest_id} className="group relative bg-[#0f0f12] border border-white/5 hover:border-white/10 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-xl hover:shadow-black/50">
                                 {/* Card Header */}
                                 <div className="p-5 border-b border-white/5 space-y-4">
                                     <div className="flex justify-between items-start">
@@ -147,13 +133,13 @@ const BacktestList = () => {
                                                 <StatusIcon size={18} />
                                             </div>
                                             <div>
-                                                <h3 className="text-base font-medium text-white group-hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/backtest/${test.id}`)}>
+                                                <h3 className="text-base font-medium text-white group-hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/backtest/${test.backtest_id}`)}>
                                                     {test.name}
                                                 </h3>
                                                 <div className="flex items-center gap-2 mt-1">
                                                     <span className="text-xs text-gray-500 flex items-center gap-1">
                                                         <Clock size={10} />
-                                                        {test.date}
+                                                        {new Date(test.created_at).toLocaleString()}
                                                     </span>
                                                 </div>
                                             </div>
@@ -173,13 +159,13 @@ const BacktestList = () => {
                                             <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Strategy</p>
                                             <div className="flex items-center gap-1.5 text-gray-300">
                                                 <Activity size={12} className="text-primary" />
-                                                <span className="text-sm font-medium">{test.strategy}</span>
+                                                <span className="text-sm font-medium">{test.parameters?.strategy || 'N/A'}</span>
                                             </div>
                                         </div>
                                         <div>
                                             <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1">Market</p>
                                             <div className="flex items-center gap-1.5 text-gray-300">
-                                                <span className="text-sm font-medium font-mono bg-white/5 px-1.5 rounded">{test.symbol}</span>
+                                                <span className="text-sm font-medium font-mono bg-white/5 px-1.5 rounded">{test.parameters?.symbol || 'N/A'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -188,14 +174,14 @@ const BacktestList = () => {
                                     <div className="flex items-end justify-between bg-white/[0.02] p-3 rounded-lg border border-white/5">
                                         <div>
                                             <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-0.5">Total Return</p>
-                                            <div className={`text-lg font-bold flex items-center gap-1 ${test.status === 'ERROR' ? 'text-gray-500' : 'text-emerald-400'}`}>
-                                                {test.status !== 'ERROR' && <TrendingUp size={14} />}
-                                                {test.return}
+                                            <div className={`text-lg font-bold flex items-center gap-1 ${test.status === 'ERROR' ? 'text-gray-500' : (test.total_return_pct >= 0 ? 'text-emerald-400' : 'text-red-400')}`}>
+                                                {test.status !== 'ERROR' && test.total_return_pct !== undefined && <TrendingUp size={14} className={test.total_return_pct < 0 ? 'rotate-180 text-red-400' : ''} />}
+                                                {test.status === 'ERROR' ? '0.00%' : `${test.total_return_pct?.toFixed(2)}%`}
                                             </div>
                                         </div>
                                         <div className="flex gap-1">
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); navigate(`/backtest/${test.id}`); }}
+                                                onClick={(e) => { e.stopPropagation(); navigate(`/backtest/${test.backtest_id}`); }}
                                                 className="p-2 rounded hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
                                                 title="View Analysis"
                                             >
@@ -204,7 +190,7 @@ const BacktestList = () => {
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    handleDelete(test.id);
+                                                    handleDelete(test.backtest_id);
                                                 }}
                                                 className="p-2 rounded hover:bg-white/10 text-gray-400 hover:text-red-400 transition-colors"
                                                 title="Delete simulation"
@@ -221,7 +207,7 @@ const BacktestList = () => {
                     <div className="col-span-1 md:col-span-2 xl:col-span-3 py-12 flex flex-col items-center justify-center text-center border border-dashed border-white/10 rounded-xl bg-white/[0.02]">
                         <Search className="h-10 w-10 text-gray-600 mb-3" />
                         <p className="text-gray-400 font-medium">No results found</p>
-                        <p className="text-sm text-gray-600 mt-1">Try adjusting your search or filters</p>
+                        <p className="text-sm text-gray-600 mt-1">Run a new simulation to see results here.</p>
                     </div>
                 )}
             </div>
@@ -229,7 +215,6 @@ const BacktestList = () => {
             <CreateBacktestModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onStart={handleStartBacktest}
             />
         </div>
     );

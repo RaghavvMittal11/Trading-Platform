@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import BacktestList from './pages/BacktestList';
 import BacktestDetail from './pages/BacktestDetail';
+import { BacktestProvider } from './context/BacktestContext';
 
 /**
  * Main App component.
@@ -12,8 +13,9 @@ import BacktestDetail from './pages/BacktestDetail';
  */
 function App() {
   return (
-    <Router>
-      <Layout>
+    <BacktestProvider>
+      <Router>
+        <Layout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/backtest" element={<BacktestList />} />
@@ -23,6 +25,7 @@ function App() {
         </Routes>
       </Layout>
     </Router>
+    </BacktestProvider>
   );
 }
 
