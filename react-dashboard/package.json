@@ -1,8 +1,15 @@
 {
   "name": "react-dashboard",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
+  "description": "None",
+  "license": "ISC",
+  "author": "",
   "type": "module",
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
