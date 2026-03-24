@@ -26,6 +26,12 @@ from datetime import datetime, timezone
 import pandas as pd
 
 from app.core.config import settings
+from app.modules.backtest.chart import (
+    _compute_chart_stats,
+    build_backtest_chart,
+    prepare_chart_dataframe,
+    save_chart_html,
+)
 from app.modules.backtest.data_cache import get_historical_data
 from app.modules.backtest.performance import simulate_trades, synthesize
 from app.modules.backtest.strategies import get_strategy
@@ -124,6 +130,20 @@ async def run_backtest(request: BacktestRunRequest) -> BacktestRunResponse:
     # ── 6. Performance synthesis ──────────────────────────────────────────────
     statistics, trade_records = synthesize(equity_curve, raw_trades, request.initial_cash)
 
+    # ── 6b. Generate interactive Plotly chart ─────────────────────────────────
+    try:
+        chart_path = await loop.run_in_executor(
+            _thread_pool,
+            _generate_chart,
+            df_signals,
+            request.initial_cash,
+            request.strategy.value,
+            backtest_id,
+        )
+        logger.info("Chart generated → %s", chart_path)
+    except Exception as exc:
+        logger.warning("Chart generation failed (non-fatal): %s", exc)
+
     # ── 7. Assemble response ──────────────────────────────────────────────────
     duration_days = (request.end_date - request.start_date).days
 
@@ -184,6 +204,20 @@ def _run_simulation(df: pd.DataFrame, req: BacktestRunRequest) -> tuple:
         order_size_usdt=req.order_size_usdt,
         intraday=req.intraday,
     )
+
+
+def _generate_chart(
+    df_signals: pd.DataFrame,
+    initial_cash: float,
+    strategy_name: str,
+    backtest_id: str,
+) -> str:
+    """Build the interactive Plotly chart and save as HTML. Returns file path."""
+    chart_df = prepare_chart_dataframe(df_signals, initial_cash)
+    stats = _compute_chart_stats(chart_df, initial_cash)
+    fig = build_backtest_chart(chart_df, stats, strategy_name)
+    return save_chart_html(fig, backtest_id)
+
 
 
 def _bars_to_dataframe(bars: list[OHLCV]) -> pd.DataFrame:

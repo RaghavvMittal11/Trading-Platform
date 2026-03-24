@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ExternalLink, Calendar, BarChart2, Layers, Activity } from 'lucide-react';
-import PortfolioChart from '../components/PortfolioChart';
+import { ArrowLeft, Download, Calendar, BarChart2, Layers, Activity } from 'lucide-react';
 import { useBacktest } from '../context/BacktestContext';
 
 const StatGrid = ({ items, cols = 4 }) => (
@@ -45,11 +44,8 @@ const BacktestDetail = () => {
         parameters = {}
     } = backtest;
 
-    // Build chart data
-    const chartData = (equity_curve || []).map(pt => ({
-        time: pt.timestamp.split(' ')[0] || pt.timestamp, // Simple date truncation
-        value: pt.value
-    }));
+    // Chart URL served by the backend
+    const chartUrl = `/api/v1/backtest/chart/${id}`;
 
     // Build stats for grids
     const quickStats = [
@@ -95,6 +91,27 @@ const BacktestDetail = () => {
         { label: 'Open Trades', value: statistics.open_trades || 0 }
     ];
 
+    const handleExport = async () => {
+        try {
+            const response = await fetch(chartUrl);
+            if (!response.ok) {
+                throw new Error('Chart not available for download');
+            }
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${name.replace(/\s+/g, '_')}_chart.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Export failed:', err);
+            alert('Failed to export chart. Please try again.');
+        }
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
@@ -123,9 +140,12 @@ const BacktestDetail = () => {
                     </div>
                 </div>
 
-                <button className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold">
-                    <ExternalLink size={16} />
-                    Export Report
+                <button
+                    onClick={handleExport}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-semibold"
+                >
+                    <Download size={16} />
+                    Export Chart
                 </button>
             </div>
 
@@ -156,8 +176,14 @@ const BacktestDetail = () => {
                             </div>
                         ) : (
                             <>
-                                <div className="glass-card">
-                                    <PortfolioChart chartData={chartData} />
+                                <div className="glass-card overflow-hidden rounded-xl border border-white/5">
+                                    <iframe
+                                        src={chartUrl}
+                                        title="Backtest Interactive Chart"
+                                        className="w-full border-0"
+                                        style={{ height: '700px', background: '#131722' }}
+                                        sandbox="allow-scripts allow-same-origin"
+                                    />
                                 </div>
                                 <div className="glass-card p-6 border border-white/5">
                                     <h3 className="text-lg font-bold text-white mb-4">Quick Stats</h3>
